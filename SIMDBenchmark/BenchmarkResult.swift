@@ -2,14 +2,25 @@ import Foundation
 
 struct BenchmarkResult: Identifiable, Sendable {
     let kind: BenchmarkKind
+    let configuration: BenchmarkConfiguration
     let duration: TimeInterval
     let requestedIterations: Int
     let completedIterations: Int
-    let checksum: Float
+    let checksum: Double
     let wasCancelled: Bool
 
     var id: BenchmarkKind { kind }
-    var label: String { kind.title }
+
+    var label: String {
+        switch kind {
+        case .scalar:
+            configuration.scalarTitle
+        case .optimizedScalar:
+            "Optimized \(configuration.scalarTitle)"
+        case .simd:
+            configuration.simdTitle
+        }
+    }
 
     var perIteration: TimeInterval {
         completedIterations > 0 ? duration / Double(completedIterations) : 0
